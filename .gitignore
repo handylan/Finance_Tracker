@@ -18,6 +18,13 @@ target/
 *.iws
 *.iml
 *.ipr
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries/
+.idea/shelf/
+.idea/dataSources/
+.idea/dataSourcesLocal.xml
+.idea/sqlDataSources.xml
 
 ### NetBeans ###
 /nbproject/private/
@@ -31,3 +38,31 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Logs and temp
+*.log
+logs/
+log/
+tmp/
+temp/
+*.tmp
+*.bak
+*~
+
+# OS junk
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Maven extras
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+
+# Java errors
+hs_err_pid*
+replay_pid*
