@@ -53,7 +53,7 @@ public class Transaction {
     //toString() method
     public String toString() {
         String sign = (type == TransactionType.INCOME) ? "+" : "-";
-        return String.format("%d | %s%.2f | %s | %s | %s | %s",
-                id, sign, amount, type, category, description, date);
+        return String.format("%3d | %s%.2f | %-8s | %-30s | %-12s | %s",
+                id, sign, amount, type, description, category, date);
     }
 }

@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class ConsoleFinanceTracker {
 
-    private static List<Transaction> transactions = new ArrayList<>();
+    private static final List<Transaction> transactions = new ArrayList<>();
     private static final Scanner scanner = new Scanner(System.in);
 
     public static void main(String[] args) {
@@ -69,18 +69,18 @@ public class ConsoleFinanceTracker {
                 continue;
             }
 
-            System.out.print("Category: ");
-            String curCategory = scanner.nextLine().trim();
-
             System.out.print("Description: ");
             String curDescription = scanner.nextLine().trim();
+
+            System.out.print("Category: ");
+            String curCategory = scanner.nextLine().trim();
 
             LocalDate curDate = LocalDate.now();
 
             try {
                 Transaction newTransaction = new Transaction(curAmount, curCategory, curDescription, curDate);
                 transactions.add(newTransaction);
-                System.out.println("Transaction [" + newTransaction.toString() + "] added successfully!");
+                System.out.println("Transaction [" + newTransaction + "] added successfully!");
                 success = true;
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
@@ -93,7 +93,8 @@ public class ConsoleFinanceTracker {
         if (transactions.isEmpty()) {
             System.out.println("No transactions yet.");
         } else {
-            System.out.println("ID | AMOUNT | TYPE | CATEGORY | DESCRIPTION | DATE");
+            System.out.println("ID  |       Amount | Type     | Description                        | Category     | Date");
+            System.out.println("-".repeat(90));
             for (Transaction t : transactions) {
                 System.out.println(t.toString());
             }
@@ -118,7 +119,8 @@ public class ConsoleFinanceTracker {
             double balance = totalIncome - totalExpense;
             String balanceSign = balance >= 0 ? "+" : "";
 
-            System.out.println("INCOMES | EXPENSES | BALANCE");
+            System.out.println("INCOMES      | EXPENSES      | BALANCE     ");
+            System.out.println("-".repeat(80));
             System.out.printf("+%.2f | -%.2f | %s%.2f", totalIncome, totalExpense, balanceSign, Math.abs(balance));
         }
     }
