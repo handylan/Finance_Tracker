@@ -13,7 +13,7 @@ public class Transaction {
     private final LocalDate date;
 
     //constructor
-    public Transaction(double amount, String category, String description, LocalDate date) {
+    public Transaction(double amount, String description, String category, LocalDate date) {
         if (amount == 0) {
             throw new IllegalArgumentException("Amount can't be 0.");
         }

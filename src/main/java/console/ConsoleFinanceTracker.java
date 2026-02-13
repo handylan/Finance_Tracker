@@ -1,5 +1,9 @@
 package console;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +16,7 @@ public class ConsoleFinanceTracker {
 
     public static void main(String[] args) {
         System.out.println("--- Personal Finance Tracker (Demo) ---");
+        loadFromFile();
 
         while (true) {
             printMenu();
@@ -36,6 +41,11 @@ public class ConsoleFinanceTracker {
                     viewSummary();
                     break;
                 case 4:
+                    try {
+                        saveToFile();
+                    } catch (IOException e) {
+                        System.out.println("Failed to save: " + e.getMessage());
+                    }
                     System.out.println("Goodbye :)");
                     scanner.close();
                     return;
@@ -78,8 +88,13 @@ public class ConsoleFinanceTracker {
             LocalDate curDate = LocalDate.now();
 
             try {
-                Transaction newTransaction = new Transaction(curAmount, curCategory, curDescription, curDate);
+                Transaction newTransaction = new Transaction(curAmount, curDescription, curCategory, curDate);
                 transactions.add(newTransaction);
+                try {
+                    saveToFile();
+                } catch (IOException e) {
+                    System.out.println("Failed to save: " + e.getMessage());
+                }
                 System.out.println("Transaction [" + newTransaction + "] added successfully!");
                 success = true;
             } catch (IllegalArgumentException e) {
@@ -122,6 +137,57 @@ public class ConsoleFinanceTracker {
             System.out.println("INCOMES      | EXPENSES      | BALANCE     ");
             System.out.println("-".repeat(80));
             System.out.printf("+%.2f | -%.2f | %s%.2f", totalIncome, totalExpense, balanceSign, Math.abs(balance));
+        }
+    }
+
+    private static void saveToFile() throws IOException {
+        try (PrintWriter writer = new PrintWriter(new FileWriter("data/transactions.csv"))) {
+            writer.println("ID,Amount,Type,Description,Category,Date");
+
+            for(Transaction t : transactions) {
+                writer.printf("%d,%.2f,%s,\"%s\",\"%s\",%s%n",
+                        t.getId(),
+                        t.getAmount(),
+                        t.getType(),
+                        t.getDescription().replace("\"", "\"\""),
+                        t.getCategory().replace("\"", "\"\""),
+                        t.getDate()
+                );
+            }
+        }
+    }
+
+    private static void loadFromFile() {
+        File file = new File("data/transactions.csv");
+        if(!file.exists()) {
+            System.out.println("No saved data found");
+            return;
+        }
+
+        try(Scanner fileScanner = new Scanner(file)) {
+            if(fileScanner.hasNextLine()) {
+                fileScanner.nextLine(); //skip header
+            }
+
+            while(fileScanner.hasNextLine()) {
+                String line = fileScanner.nextLine();
+                String[] parts = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+
+                if(parts.length != 6) continue;
+
+                int id = Integer.parseInt(parts[0]);
+                double amount = Double.parseDouble(parts[1]);
+                TransactionType type = TransactionType.valueOf(parts[2]);
+                String description = parts[3].replace("\"\"", "\"").replaceAll("^\"|\"$", "");
+                String category = parts[4].replace("\"\"", "\"").replaceAll("^\"|\"$", "");
+                LocalDate date = LocalDate.parse(parts[5]);
+
+                Transaction t = new Transaction(amount, description, category, date);
+                transactions.add(t);
+            }
+            System.out.println("Loaded " + transactions.size() + " transactions.");
+        } catch (Exception e) {
+            System.out.println("Error loading file: " + e.getMessage());
         }
     }
 }
